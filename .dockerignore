@@ -1,0 +1,7 @@
+.git
+.cache
+bin/*.exe
+bin/*.pdb
+dist
+node_modules
+*.log

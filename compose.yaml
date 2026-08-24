@@ -1,0 +1,50 @@
+services:
+  control:
+    build:
+      context: .
+      args:
+        SERVICE: control
+    environment:
+      AIPOOL_CONTROL_ADDR: 0.0.0.0:8080
+      AIPOOL_SHARED_SECRET: ${AIPOOL_SHARED_SECRET:-dev-only-change-me}
+      AIPOOL_HOST_SECRET: ${AIPOOL_HOST_SECRET:-}
+      AIPOOL_CLIENT_SECRET: ${AIPOOL_CLIENT_SECRET:-}
+      AIPOOL_LEASE_SECRET: ${AIPOOL_LEASE_SECRET:-}
+    ports:
+      - "8080:8080"
+
+  # Compose is intentionally a model-free mock environment. Real providers
+  # use the Windows Provider package and receive user-owned models on demand.
+  host:
+    build:
+      context: .
+      args:
+        SERVICE: host
+    depends_on:
+      - control
+    environment:
+      AIPOOL_HOST_ADDR: 0.0.0.0:8090
+      AIPOOL_HOST_ENDPOINT: http://host:8090
+      AIPOOL_CONTROL_URL: http://control:8080
+      AIPOOL_SHARED_SECRET: ${AIPOOL_SHARED_SECRET:-dev-only-change-me}
+      AIPOOL_HOST_SECRET: ${AIPOOL_HOST_SECRET:-}
+      AIPOOL_LEASE_SECRET: ${AIPOOL_LEASE_SECRET:-}
+      AIPOOL_NODE_ID: demo-gpu
+      AIPOOL_MODELS: mock-llm
+    ports:
+      - "8090:8090"
+
+  proxy:
+    build:
+      context: .
+      args:
+        SERVICE: proxy
+    depends_on:
+      - control
+      - host
+    environment:
+      AIPOOL_PROXY_ADDR: 0.0.0.0:11434
+      AIPOOL_CONTROL_URL: http://control:8080
+      AIPOOL_CLIENT_SECRET: ${AIPOOL_CLIENT_SECRET:-}
+    ports:
+      - "11434:11434"
