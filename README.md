@@ -1,4 +1,4 @@
-# AIPool
+# AIPool（纯毛坯房，未经过任何测试）
 
 AIPool 是一个“好友共享 AI 推理算力”原型。模型由请求端用户在本地拥有和管理；算力提供端只安装 AIPool Provider，不需要手动下载模型、安装 llama.cpp、配置 CUDA 应用或选择模型。
 
